@@ -116,14 +116,18 @@ class TaskList extends HTMLElement {
 		
 		select.addEventListener('change', (e) =>{
 			const selectedStatus = e.target.value;
-			if (selectedStatus !== "0" && this.changestatusCallback) {
-				this.changestatusCallback(task.id, e.target.value);
+			if (selectedStatus !== "0") {
+				const confirmed = window.confirm (`set "${task.title}" to "${selectedStatus}"`);
+				if (confirmed && this.changestatusCallback){
+					this.changestatusCallback(task.id, selectedStatus);
+				}
 			}
 			select.selectedIndex = 0;
 		});
 		
 		removeBtn.addEventListener('click', () =>{
-			if (this.deletetaskCallback){
+			const confirmed = window.confirm(`delete task "${task.title}"`);
+			if (confirmed && this.deletetaskCallback){
 				this.deletetaskCallback(task.id);
 			}
 		});
