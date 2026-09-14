@@ -35,6 +35,12 @@ class TaskList extends HTMLElement {
         /**
          * Fill inn rest of the code
          */
+		this.attachShadow({mode: 'open'});
+		this.shadowRoot.appendChild(template.content.cloneNode(true));
+		
+		this.statuses = [];
+		this.changestatusCallback = null;
+		this.deletetaskCallback = null;
     }
 
     /**
@@ -45,6 +51,7 @@ class TaskList extends HTMLElement {
         /**
          * Fill inn the code
          */
+		this.statuses = allstatuses;
     }
 
     /**
@@ -56,6 +63,7 @@ class TaskList extends HTMLElement {
         /**
          * Fill inn the code
          */
+		this.changestatusCallback = callback;
     }
 
     /**
@@ -67,6 +75,7 @@ class TaskList extends HTMLElement {
         /**
          * Fill inn the code
          */
+		this.deletetaskCallback = callback;
     }
 
     /**
@@ -78,6 +87,47 @@ class TaskList extends HTMLElement {
         /**
          * Fill inn the code
          */
+		const container = this.shadowRoot.querySelector('#tasklist');
+		let table = container.querySelector('table');
+		if (!table){
+			container.appendChild(tasktable.content.cloneNode(true));
+		}
+		
+		const tbody = this.shadowRoot.querySelector('tbody');
+		const clone = taskrow.content.cloneNode(true);
+		
+		const row = clone.querySelector('tr');
+		const cells = row.querySelectorAll('td');
+		const select = row.querySelector('select');
+		const removeBtn = row.querySelector('button');
+		
+		row.dataset.id = task.id;
+		cells[0].textContent = task.title;
+		cells[1].textContent = task.status;
+		
+		const defaultoption = select.querySelector('option');
+		
+		this.statuses.forEach(status =>{
+			const option = defaultoption.cloneNode(true);
+			option.value = status;
+			option.textContent = status;
+			select.appendChild(option);
+		});
+		
+		select.addEventListener('change', (e) =>{
+			const selectedStatus = e.target.value;
+			if (selectedStatus !== "0" && this.changestatusCallback) {
+				this.changestatusCallback(task.id, e.target.value);
+			}
+			select.selectedIndex = 0;
+		});
+		
+		removeBtn.addEventListener('click', () =>{
+			if (this.deletetaskCallback){
+				this.deletetaskCallback(task.id);
+			}
+		});
+		tbody.prepend(clone);
     }
 
     /**
@@ -88,6 +138,10 @@ class TaskList extends HTMLElement {
         /**
          * Fill inn the code
          */
+		const row = this.shadowRoot.querySelector(`tr[data-id="${task.id}"]`);
+		if (row) {
+			row.querySelectorAll("td")[1].textContent = task.status;
+		}
     }
 
     /**
@@ -98,6 +152,14 @@ class TaskList extends HTMLElement {
         /**
          * Fill inn the code
          */
+		const row = this.shadowRoot.querySelector(`tr[data-id="${id}"]`);
+		if (row){
+			row.remove();
+		}
+		if (this.getNumtasks() === 0){
+			const container = this.shadowRoot.querySelector("#tasklist");
+			container.replaceChildren();
+		}
     }
 
     /**
@@ -108,6 +170,7 @@ class TaskList extends HTMLElement {
         /**
          * Fill inn the code
          */
+		return this.shadowRoot.querySelectorAll("tbody tr").length;
     }
 }
 customElements.define('groupx-tasklist', TaskList);
