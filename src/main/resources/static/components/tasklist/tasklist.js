@@ -177,4 +177,4 @@ class TaskList extends HTMLElement {
 		return this.shadowRoot.querySelectorAll("tbody tr").length;
     }
 }
-customElements.define('groupx-tasklist', TaskList);
+customElements.define('group5-tasklist', TaskList);
