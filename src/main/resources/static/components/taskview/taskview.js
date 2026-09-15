@@ -1,4 +1,5 @@
 import "../tasklist/tasklist.js"
+import "../taskbox/taskbox.js";
 
 const template = document.createElement("template");
 template.innerHTML = `
@@ -32,7 +33,7 @@ class TaskView extends HTMLElement {
         this.shadowRoot.appendChild(template.content.cloneNode(true));
 
         this.#tasklist = this.shadowRoot.querySelector("group5-tasklist");
-        this.#taskbox = null // TODO: implement
+        this.#taskbox = this.shadowRoot.querySelector("group5-taskbox");
         this.#message = this.shadowRoot.querySelector("#message p");
         this.#newTaskButton = this.shadowRoot.querySelector("#newtask button");
         this.#serviceUrl = null;
@@ -83,7 +84,7 @@ class TaskView extends HTMLElement {
 
         this.#newTaskButton.disabled = false;
         this.#newTaskButton.addEventListener("click", () => {
-            console.log("New task button clicked");
+            this.#taskbox.show();
         });
 
         this.#updateMessage();
