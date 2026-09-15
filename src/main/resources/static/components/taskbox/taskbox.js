@@ -13,6 +13,7 @@ template.innerHTML = `
 			<div>Status:</div><div><select></select></div>
 		</div>
 		<p><button type="submit">Add task</button></p>
+		<p><button id="close-btn" type="button">Close</button></p>
 	</dialog>
 `;
 
@@ -20,32 +21,34 @@ class Taskbox extends HTMLElement {
 	constructor() {
 		super();
 		
-	this.attachShadow({mode:'open'});
-	this.shadowRoot.appendChild(template.content.cloneNode(true));
-	
-	this.dialog = this.shadowRoot.querySelector('dialog');
-	this.closeBtn =this.shadowRoot.querySelector('.close-btn');
-	this.form = this.shadowRoot.querySelector('form');
-	this.titleInput = this.shadowRoot.querySelector('title');
-	this.statusSelect = this.shadowRoot.querySelector('select');
-	
-	this.newTaskCallback = null;
-	
-	this.closeBtn.addEventListener('click', () => this.close());
-	
-	this.form.addEventListener('submit', (e) =>{
-		const title = this.titleInput.value.trim();
-		const status = this.statusSelect.value;
-		
-		if (title && this.newTaskCallback) {
-			this.newtaskCallback({title, status});
-		}
-		this.titleInput = "";
-	})
+        this.attachShadow({mode:'open'});
+        this.shadowRoot.appendChild(template.content.cloneNode(true));
+
+        this.dialog = this.shadowRoot.querySelector('dialog');
+        this.closeBtn =this.shadowRoot.querySelector('#close-btn');
+        this.form = this.shadowRoot.querySelector('form');
+        this.titleInput = this.shadowRoot.querySelector('title');
+        this.statusSelect = this.shadowRoot.querySelector('select');
+
+        this.newTaskCallback = null;
+
+        this.closeBtn.addEventListener('click', () => this.close());
+
+        this.form.addEventListener('submit', (e) =>{
+            const title = this.titleInput.value.trim();
+            const status = this.statusSelect.value;
+
+            if (title && this.newTaskCallback) {
+                this.newtaskCallback({title, status});
+            }
+            this.titleInput = "";
+        })
 	}
+
 	show() {
 		this.dialog.showModal();
 	}
+
 	setStatuseslist(list) {
 		this.statusSelect.replaceChildren();
 		list.forEach(status => {
@@ -55,11 +58,13 @@ class Taskbox extends HTMLElement {
 			this.statusSelect.appendChild(option);
 		});
 	}
+
 	addNewtaskCallback(callback){
 		this.newTaskCallback = callback;
 	}
-	close(){
-		
+
+	close() {
+	    this.dialog.close();
 	}
 }
-customElements.define('groupx-taskbox', Taskbox);
+customElements.define('group5-taskbox', Taskbox);
