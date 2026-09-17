@@ -34,7 +34,7 @@ class Taskbox extends HTMLElement {
 
         this.closeBtn.addEventListener('click', () => this.close());
 
-        this.form.addEventListener('submit', (e) =>{
+        this.dialog.addEventListener('submit', (e) =>{
             const title = this.titleInput.value.trim();
             const status = this.statusSelect.value;
 

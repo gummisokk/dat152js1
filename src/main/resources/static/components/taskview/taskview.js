@@ -39,7 +39,7 @@ class TaskView extends HTMLElement {
         this.#serviceUrl = null;
     }
 
-    connectedCallback() {
+    async connectedCallback() {
         this.#serviceUrl = this.getAttribute("data-serviceurl");
 
         const allstatuses = ["WAITING", "ACTIVE", "DONE"];
@@ -61,9 +61,20 @@ class TaskView extends HTMLElement {
             },
         ];
 
-        this.#tasklist.setStatuseslist(allstatuses);
+        let ret = JSON.parse(await (await fetch("api/allstatuses")).text());
+        this.#tasklist.setStatuseslist(ret.allstatuses);
 
         this.#tasklist.addChangestatusCallback((id, newStatus) => {
+            let http = new XMLHttpRequest();
+            http.onreadystatechange = function() {
+                console.log(this.status);
+                if (this.readyState === 4 && this.status === 200) {
+                }
+            }
+            http.open("PUT", `api/task/${id}`, true);
+            http.setRequestHeader("Content-type", "application/json");
+            http.send(`{"status": "${newStatus}"}`);
+
             console.log(`Change task ${id} to ${newStatus}`);
             this.#tasklist.updateTask({
                 id: id,
