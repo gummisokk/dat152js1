@@ -48,55 +48,55 @@ class TaskView extends HTMLElement {
         this.#tasklist.setStatuseslist(allstatuses);
         this.#taskbox.setStatuseslist(allstatuses);
 
+        let ts = this.#tasklist;
         this.#tasklist.addChangestatusCallback((id, newStatus) => {
             let http = new XMLHttpRequest();
             http.onreadystatechange = function() {
-                console.log(this.status);
                 if (this.readyState === 4 && this.status === 200) {
+                    let ret = JSON.parse(this.responseText)
+                    if (ret.responseStatus == true){
+                         ts.updateTask({id: ret.id, status: ret.status});
+                    }
                 }
             }
             http.open("PUT", `api/task/${id}`, true);
             http.setRequestHeader("Content-type", "application/json");
             http.send(`{"status": "${newStatus}"}`);
-
-            console.log(`Change task ${id} to ${newStatus}`);
-            this.#tasklist.updateTask({
-                id: id,
-                status: newStatus,
-            });
             this.#updateMessage();
         });
+
 
         this.#tasklist.addDeletetaskCallback((id) => {
             let http = new XMLHttpRequest();
             http.onreadystatechange = function() {
-                console.log(this.status);
                 if (this.readyState === 4 && this.status === 200) {
+                    let ret = JSON.parse(this.responseText)
+                    if (ret.responseStatus == true){
+                         ts.removeTask(ret.id);
+                    }
                 }
             }
             http.open("DELETE", `api/task/${id}`, true);
             http.send();
-
-            console.log(`Delete task ${id}`);
-            this.#tasklist.removeTask(id);
             this.#updateMessage();
         });
 
-        let ts = this.#tasklist
         this.#taskbox.addNewtaskCallback((title, status) => {
             let http = new XMLHttpRequest();
             http.onreadystatechange = function() {
-                console.log(this.status);
                 if (this.readyState === 4 && this.status === 200) {
-                    ts.showTask(JSON.parse(this.responseText).task);
+                    let ret = JSON.parse(this.responseText)
+                    if (ret.responseStatus == true){
+                        ts.showTask(ret.task);
+                    }
                 }
             }
             http.open("POST", `api/task`, true);
             http.setRequestHeader("Content-type", "application/json");
             http.send(`{"title": "${title}", "status": "${status}"}`);
-
-            this.#updateMessage();
+            
         });
+        this.#updateMessage();
 
         tasks.forEach((task) => {
             this.#tasklist.showTask(task);
@@ -129,12 +129,6 @@ class TaskView extends HTMLElement {
 
         this.#setMessage(`${numTasks} tasks in list.`);
     }
-
-    //TODO: loadStatuses
-    //TODO: loadTasks
-    //TODO: createTask
-    //TODO: updateTaskStatus
-    //TODO: deleteTask
 }
 
 customElements.define('group5-taskview', TaskView);

@@ -32,9 +32,6 @@ class TaskList extends HTMLElement {
 
     constructor() {
         super();
-        /**
-         * Fill inn rest of the code
-         */
 		this.attachShadow({mode: 'open'});
 		this.shadowRoot.appendChild(template.content.cloneNode(true));
 		
@@ -48,9 +45,6 @@ class TaskList extends HTMLElement {
      * @param {Array} list with all possible task statuses
      */
     setStatuseslist(allstatuses) {
-        /**
-         * Fill inn the code
-         */
 		this.statuses = allstatuses;
     }
 
@@ -60,9 +54,6 @@ class TaskList extends HTMLElement {
      * @param {function} callback
      */
     addChangestatusCallback(callback) {
-        /**
-         * Fill inn the code
-         */
 		this.changestatusCallback = callback;
     }
 
@@ -72,9 +63,6 @@ class TaskList extends HTMLElement {
      * @param {function} callback
      */
     addDeletetaskCallback(callback) {
-        /**
-         * Fill inn the code
-         */
 		this.deletetaskCallback = callback;
     }
 
@@ -84,9 +72,6 @@ class TaskList extends HTMLElement {
      * @param {Object} task - Object representing a task
      */
     showTask(task) {
-        /**
-         * Fill inn the code
-         */
 		const container = this.shadowRoot.querySelector('#tasklist');
 		let table = container.querySelector('table');
 		if (!table){
@@ -139,9 +124,6 @@ class TaskList extends HTMLElement {
      * @param {Object} task - Object with attributes {'id':taskId,'status':newStatus}
      */
     updateTask(task) {
-        /**
-         * Fill inn the code
-         */
 		const row = this.shadowRoot.querySelector(`tr[data-id="${task.id}"]`);
 		if (row) {
 			row.querySelectorAll("td")[1].textContent = task.status;
@@ -153,9 +135,6 @@ class TaskList extends HTMLElement {
      * @param {Integer} task - ID of task to remove
      */
     removeTask(id) {
-        /**
-         * Fill inn the code
-         */
 		const row = this.shadowRoot.querySelector(`tr[data-id="${id}"]`);
 		if (row){
 			row.remove();
@@ -171,9 +150,6 @@ class TaskList extends HTMLElement {
      * @return {Number} - Number of tasks on display in view
      */
     getNumtasks() {
-        /**
-         * Fill inn the code
-         */
 		return this.shadowRoot.querySelectorAll("tbody tr").length;
     }
 }

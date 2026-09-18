@@ -36,8 +36,6 @@ class Taskbox extends HTMLElement {
 		this.submitBtn.addEventListener('click', () =>{
 			let title = this.titleInput.value.trim();
 			let status = this.statusSelect.value;
-	
-			console.log(title + " " + status);
 			if (title && this.newTaskCallback) {
 				this.newTaskCallback(title, status);
 			}
