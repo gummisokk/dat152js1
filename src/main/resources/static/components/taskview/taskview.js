@@ -42,27 +42,11 @@ class TaskView extends HTMLElement {
     async connectedCallback() {
         this.#serviceUrl = this.getAttribute("data-serviceurl");
 
-        const allstatuses = ["WAITING", "ACTIVE", "DONE"];
-        const tasks = [
-            {
-                id: 1,
-                title: "Paint roof",
-                status: "WAITING",
-            },
-            {
-                id: 2,
-                title: "Wash windows",
-                status: "ACTIVE",
-            },
-            {
-                id: 3,
-                title: "Wash floor",
-                status: "DONE",
-            },
-        ];
-
-        let ret = JSON.parse(await (await fetch("api/allstatuses")).text());
-        this.#tasklist.setStatuseslist(ret.allstatuses);
+        let allstatuses = JSON.parse(await (await fetch("api/allstatuses")).text()).allstatuses;
+        let tasks = JSON.parse(await (await fetch("api/tasklist")).text()).tasks;
+        
+        this.#tasklist.setStatuseslist(allstatuses);
+        this.#taskbox.setStatuseslist(allstatuses);
 
         this.#tasklist.addChangestatusCallback((id, newStatus) => {
             let http = new XMLHttpRequest();
@@ -84,8 +68,33 @@ class TaskView extends HTMLElement {
         });
 
         this.#tasklist.addDeletetaskCallback((id) => {
+            let http = new XMLHttpRequest();
+            http.onreadystatechange = function() {
+                console.log(this.status);
+                if (this.readyState === 4 && this.status === 200) {
+                }
+            }
+            http.open("DELETE", `api/task/${id}`, true);
+            http.send();
+
             console.log(`Delete task ${id}`);
             this.#tasklist.removeTask(id);
+            this.#updateMessage();
+        });
+
+        let ts = this.#tasklist
+        this.#taskbox.addNewtaskCallback((title, status) => {
+            let http = new XMLHttpRequest();
+            http.onreadystatechange = function() {
+                console.log(this.status);
+                if (this.readyState === 4 && this.status === 200) {
+                    ts.showTask(JSON.parse(this.responseText).task);
+                }
+            }
+            http.open("POST", `api/task`, true);
+            http.setRequestHeader("Content-type", "application/json");
+            http.send(`{"title": "${title}", "status": "${status}"}`);
+
             this.#updateMessage();
         });
 

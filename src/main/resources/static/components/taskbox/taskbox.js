@@ -13,7 +13,6 @@ template.innerHTML = `
 			<div>Status:</div><div><select></select></div>
 		</div>
 		<p><button type="submit">Add task</button></p>
-		<p><button id="close-btn" type="button">Close</button></p>
 	</dialog>
 `;
 
@@ -25,26 +24,27 @@ class Taskbox extends HTMLElement {
         this.shadowRoot.appendChild(template.content.cloneNode(true));
 
         this.dialog = this.shadowRoot.querySelector('dialog');
-        this.closeBtn =this.shadowRoot.querySelector('#close-btn');
-        this.form = this.shadowRoot.querySelector('form');
-        this.titleInput = this.shadowRoot.querySelector('title');
+        this.closeBtn =this.shadowRoot.querySelector('span');
+        this.titleInput = this.shadowRoot.querySelector('input');
         this.statusSelect = this.shadowRoot.querySelector('select');
+        this.submitBtn = this.shadowRoot.querySelector('button');
 
         this.newTaskCallback = null;
-
-        this.closeBtn.addEventListener('click', () => this.close());
-
-        this.dialog.addEventListener('submit', (e) =>{
-            const title = this.titleInput.value.trim();
-            const status = this.statusSelect.value;
-
-            if (title && this.newTaskCallback) {
-                this.newtaskCallback({title, status});
-            }
-            this.titleInput = "";
-        })
+		
+		this.closeBtn.addEventListener('click', () => this.close());
+	
+		this.submitBtn.addEventListener('click', () =>{
+			let title = this.titleInput.value.trim();
+			let status = this.statusSelect.value;
+	
+			console.log(title + " " + status);
+			if (title && this.newTaskCallback) {
+				this.newTaskCallback(title, status);
+			}
+			this.close();
+		});
 	}
-
+	
 	show() {
 		this.dialog.showModal();
 	}
@@ -54,7 +54,7 @@ class Taskbox extends HTMLElement {
 		list.forEach(status => {
 			const option = document.createElement('option');
 			option.value = status;
-			option.textContent = value;
+			option.textContent = status;
 			this.statusSelect.appendChild(option);
 		});
 	}
