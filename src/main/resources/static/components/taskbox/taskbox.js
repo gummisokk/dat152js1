@@ -20,7 +20,7 @@ class TaskBox extends HTMLElement {
 	constructor() {
 		super();
 		
-        this.attachShadow({mode:'closed'});
+        this.shadowRoot = this.attachShadow({mode:'closed'});
         this.shadowRoot.appendChild(template.content.cloneNode(true));
 
         this.dialog = this.shadowRoot.querySelector('dialog');
@@ -36,7 +36,7 @@ class TaskBox extends HTMLElement {
 		this.submitBtn.addEventListener('click', () =>{
 			let title = this.titleInput.value.trim();
 			let status = this.statusSelect.value;
-			if (title !== "" && status !=== "" && this.newTaskCallback !== "") {
+			if (title !== "" && status !== "" && this.newTaskCallback !== null) {
 				this.newTaskCallback(title, status);
 				this.close();
 			}
@@ -53,6 +53,7 @@ class TaskBox extends HTMLElement {
 
 	setStatuseslist(list) {
 		this.statusSelect.replaceChildren();
+		
 		list.forEach(status => {
 			const option = document.createElement('option');
 			option.value = status;
