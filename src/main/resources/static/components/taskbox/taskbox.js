@@ -20,7 +20,7 @@ class TaskBox extends HTMLElement {
 	constructor() {
 		super();
 		
-        this.attachShadow({mode:'open'});
+        this.attachShadow({mode:'closed'});
         this.shadowRoot.appendChild(template.content.cloneNode(true));
 
         this.dialog = this.shadowRoot.querySelector('dialog');
