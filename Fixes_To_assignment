@@ -1,0 +1,51 @@
+The assignment is not approved.
+Deadline to deliver a corrected version is Wednesday, October 14.
+
+See the comments below for details.
+
+####################
+Use mode "closed" with attachShadow. If open, the inside of the component is accessible from other components through the shadowRoot property.
+
+The class TaskBox was supposed to be named TaskBox, i.e. capital T and B.
+
+Properties like table.tBodies[0].rows are faster than using querySelector/querySelectorAll.
+
+The HTML Living standard recommends that the constructor should be used to set up the
+initial state and default values, and to set up event listeners and possibly a shadow root.
+
+For everything else, use the "connectedCallback".
+
+With your solution, every time the component is connected to the DOM, new callbacks are added in addition to the existing ones already listening for the same events.
+
+Use "===" and "!==", not "==" and "!=". These operators will check both value and type.
+
+Use operators in a boolean context to avoid problems.
+Example on what to avoid:
+    if (this.querySelector("table")) { ... }
+Rather, use:
+    if (this.querySelector("table") !== null) { ... }
+
+In a boolean context, undefined, 0, Null, an empty text will all
+evaluate to false. Without an operator, a misprint in the expression
+can therefore be difficult to find, and can give unexpected results.
+
+The application should not need to use "XMLHttpRequest" to solve the task.
+
+The application should not need to use "JSON.parse" to solve the task.
+
+The counter for number of tasks does not work when adding task.
+
+The counter for number of tasks does not work when removing tasks.
+
+When inserting a new task, the data of the previous task is not cleared from the "New task" dialog window.
+
+When inserting a new task, the status of the previous task is not cleared from the "New task" dialog window.
+
+The SELECT element for modifying the task status does not work as intended.  The status shown on the SELECT element is not <Modify> or is not reset to <Modify>.
+
+Setting the task status to the status that the element already has should be ignored by the client.
+
+When adding a task, but missing the title or status, the "Add task" button should perhaps not close
+the dialog window as the user probably was not finished filling in the data.
+
+When a status change is aborted, the is not reset to <Modify>.
