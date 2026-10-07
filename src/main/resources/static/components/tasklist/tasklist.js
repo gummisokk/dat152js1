@@ -32,8 +32,8 @@ class TaskList extends HTMLElement {
 
     constructor() {
         super();
-		this.attachShadow({mode: 'open'});
-		this.shadowRoot.appendChild(template.content.cloneNode(true));
+		this.#shadowRoot = this.attachShadow({mode: 'closed'});
+		this.#shadowRoot.appendChild(template.content.cloneNode(true));
 		
 		this.statuses = [];
 		this.changestatusCallback = null;
@@ -72,18 +72,19 @@ class TaskList extends HTMLElement {
      * @param {Object} task - Object representing a task
      */
     showTask(task) {
-		const container = this.shadowRoot.querySelector('#tasklist');
+		const container = this.#shadowRoot.querySelector('#tasklist');
 		let table = container.querySelector('table');
-		if (!table){
+		if (table === null){
 			container.appendChild(tasktable.content.cloneNode(true));
+			table = container.querySelector('table');
 		}
 		
-		const tbody = this.shadowRoot.querySelector('tbody');
+		const tbody = table.tBodies[0};
 		const clone = taskrow.content.cloneNode(true);
 		
 		const row = clone.querySelector('tr');
-		const cells = row.querySelectorAll('td');
-		const select = row.querySelector('select');
+		const cells = row.cells;
+		const select = row.querySelector('select')
 		const removeBtn = row.querySelector('button');
 		
 		row.dataset.id = task.id;
@@ -101,9 +102,9 @@ class TaskList extends HTMLElement {
 		
 		select.addEventListener('change', (e) =>{
 			const selectedStatus = e.target.value;
-			if (selectedStatus !== "0") {
+			if (selectedStatus !== "0" && selectedStatus !== selectedStatus) {
 				const confirmed = window.confirm (`set "${task.title}" to "${selectedStatus}"`);
-				if (confirmed && this.changestatusCallback){
+				if (confirmed === true && this.changestatusCallback !== null){
 					this.changestatusCallback(task.id, selectedStatus);
 				}
 			}
@@ -124,9 +125,9 @@ class TaskList extends HTMLElement {
      * @param {Object} task - Object with attributes {'id':taskId,'status':newStatus}
      */
     updateTask(task) {
-		const row = this.shadowRoot.querySelector(`tr[data-id="${task.id}"]`);
-		if (row) {
-			row.querySelectorAll("td")[1].textContent = task.status;
+		const row = this.#shadowRoot.querySelector(`tr[data-id="${task.id}"]`);
+		if (row !== null) {
+			row.cells[1}.textContent = task.status;
 		}
     }
 
@@ -135,14 +136,13 @@ class TaskList extends HTMLElement {
      * @param {Integer} task - ID of task to remove
      */
     removeTask(id) {
-		const row = this.shadowRoot.querySelector(`tr[data-id="${id}"]`);
-		if (row){
+		const row = this.#shadowRoot.querySelector(`tr[data-id="${id}"]`);
+		if (row !== null){
 			row.remove();
 		}
-		if (this.getNumtasks() === 0){
-			const container = this.shadowRoot.querySelector("#tasklist");
+		if (this.getNumTasks() === 0) {
+			const container = this.#shadowRoot.querySelector("#tasklist");
 			container.replaceChildren();
-		}
     }
 
     /**
@@ -150,7 +150,9 @@ class TaskList extends HTMLElement {
      * @return {Number} - Number of tasks on display in view
      */
     getNumtasks() {
-		return this.shadowRoot.querySelectorAll("tbody tr").length;
+		const table = this.#shadowRoot.querySelector("#tasklist table")
+		if (table !== null && table.tBodies.length > 0) {
+			return table.tBoodies[0].rows.length;
     }
 }
 customElements.define('group5-tasklist', TaskList);
