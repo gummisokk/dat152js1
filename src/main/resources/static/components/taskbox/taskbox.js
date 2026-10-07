@@ -44,6 +44,10 @@ class TaskBox extends HTMLElement {
 	}
 	
 	show() {
+		this.title = "";
+		if (this.statusSelect.Options.length > 0) {
+			this.statusSelect.Options = 0;
+		}
 		this.dialog.showModal();
 	}
 
