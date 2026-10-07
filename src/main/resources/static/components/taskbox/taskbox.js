@@ -36,10 +36,10 @@ class TaskBox extends HTMLElement {
 		this.submitBtn.addEventListener('click', () =>{
 			let title = this.titleInput.value.trim();
 			let status = this.statusSelect.value;
-			if (title && this.newTaskCallback) {
+			if (title !== "" && status !=== "" && this.newTaskCallback !== "") {
 				this.newTaskCallback(title, status);
+				this.close();
 			}
-			this.close();
 		});
 	}
 	
@@ -65,4 +65,4 @@ class TaskBox extends HTMLElement {
 	    this.dialog.close();
 	}
 }
-customElements.define('group5-taskbox', Taskbox);
+customElements.define('group5-taskbox', TaskBox);
