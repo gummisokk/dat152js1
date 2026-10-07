@@ -16,7 +16,7 @@ template.innerHTML = `
 	</dialog>
 `;
 
-class Taskbox extends HTMLElement {
+class TaskBox extends HTMLElement {
 	constructor() {
 		super();
 		
