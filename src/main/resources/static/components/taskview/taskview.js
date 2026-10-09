@@ -39,62 +39,68 @@ class TaskView extends HTMLElement {
         this.#serviceUrl = null;
     }
 
+    async getAllStatuses(){
+        const response = await (await fetch("api/allstatuses")).json();
+        console.log(response);
+        if (response.responseStatus !== true) {
+            throw new Error(`Response status: ${response.responseStatus}`);
+        }
+        return response.allstatuses;
+    }
+
+    async getAllTasks(){
+        const response = await (await fetch("api/tasklist")).json();
+        console.log(response);
+        if (response.responseStatus !== true) {
+            throw new Error(`Response status: ${response.responseStatus}`);
+        }
+        return response.tasks;
+    }
+
     async connectedCallback() {
         this.#serviceUrl = this.getAttribute("data-serviceurl");
 
-        let allstatuses = JSON.parse(await (await fetch("api/allstatuses")).text()).allstatuses;
-        let tasks = JSON.parse(await (await fetch("api/tasklist")).text()).tasks;
+        let allstatuses = await this.getAllStatuses();
+        let tasks = await this.getAllTasks();
         
         this.#tasklist.setStatuseslist(allstatuses);
         this.#taskbox.setStatuseslist(allstatuses);
 
-        let ts = this.#tasklist;
-        this.#tasklist.addChangestatusCallback((id, newStatus) => {
-            let http = new XMLHttpRequest();
-            http.onreadystatechange = function() {
-                if (this.readyState === 4 && this.status === 200) {
-                    let ret = JSON.parse(this.responseText)
-                    if (ret.responseStatus == true){
-                         ts.updateTask({id: ret.id, status: ret.status});
-                    }
-                }
+        this.#tasklist.addChangestatusCallback(async (id, newStatus) => {
+            const response = await (await fetch(`api/task/${id}`, {
+                method: "PUT",
+                headers: {"Content-Type": "application/json"},
+                body: `{"status": "${newStatus}"}`
+            })).json();
+
+            if (response.responseStatus === true) {
+                this.#tasklist.updateTask({id: response.id, status: response.status});
             }
-            http.open("PUT", `api/task/${id}`, true);
-            http.setRequestHeader("Content-type", "application/json");
-            http.send(`{"status": "${newStatus}"}`);
+
             this.#updateMessage();
         });
 
 
-        this.#tasklist.addDeletetaskCallback((id) => {
-            let http = new XMLHttpRequest();
-            http.onreadystatechange = function() {
-                if (this.readyState === 4 && this.status === 200) {
-                    let ret = JSON.parse(this.responseText)
-                    if (ret.responseStatus == true){
-                         ts.removeTask(ret.id);
-                    }
-                }
+        this.#tasklist.addDeletetaskCallback(async (id) => {
+            const response = await (await fetch(`api/task/${id}`, {
+                method: "DELETE"
+            })).json();
+
+            if (response.responseStatus === true) {
+                this.#tasklist.removeTask(response.id);
             }
-            http.open("DELETE", `api/task/${id}`, true);
-            http.send();
             this.#updateMessage();
         });
 
-        this.#taskbox.addNewtaskCallback((title, status) => {
-            let http = new XMLHttpRequest();
-            http.onreadystatechange = function() {
-                if (this.readyState === 4 && this.status === 200) {
-                    let ret = JSON.parse(this.responseText)
-                    if (ret.responseStatus == true){
-                        ts.showTask(ret.task);
-                    }
-                }
+        this.#taskbox.addNewtaskCallback(async (title, status) => {
+            const response = await (await fetch(`api/task`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: `{"title": "${title}", "status": "${status}"}`
+            })).json();
+            if (response.responseStatus === true){
+                this.#tasklist.showTask(response.task);
             }
-            http.open("POST", `api/task`, true);
-            http.setRequestHeader("Content-type", "application/json");
-            http.send(`{"title": "${title}", "status": "${status}"}`);
-            
         });
         this.#updateMessage();
 

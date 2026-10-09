@@ -29,6 +29,7 @@ taskrow.innerHTML = `
   * Manage view with list of tasks
   */
 class TaskList extends HTMLElement {
+	#shadowRoot;
 
     constructor() {
         super();
@@ -79,7 +80,7 @@ class TaskList extends HTMLElement {
 			table = container.querySelector('table');
 		}
 		
-		const tbody = table.tBodies[0};
+		const tbody = table.tBodies[0];
 		const clone = taskrow.content.cloneNode(true);
 		
 		const row = clone.querySelector('tr');
@@ -95,6 +96,7 @@ class TaskList extends HTMLElement {
 		
 		this.statuses.forEach(status =>{
 			const option = defaultoption.cloneNode(true);
+			option.selected = false;
 			option.value = status;
 			option.textContent = status;
 			select.appendChild(option);
@@ -102,7 +104,7 @@ class TaskList extends HTMLElement {
 		
 		select.addEventListener('change', (e) =>{
 			const selectedStatus = e.target.value;
-			if (selectedStatus !== "0" && selectedStatus !== selectedStatus) {
+			if (selectedStatus !== "0") {
 				const confirmed = window.confirm (`set "${task.title}" to "${selectedStatus}"`);
 				if (confirmed === true && this.changestatusCallback !== null){
 					this.changestatusCallback(task.id, selectedStatus);
@@ -127,7 +129,7 @@ class TaskList extends HTMLElement {
     updateTask(task) {
 		const row = this.#shadowRoot.querySelector(`tr[data-id="${task.id}"]`);
 		if (row !== null) {
-			row.cells[1}.textContent = task.status;
+			row.cells[1].textContent = task.status;
 		}
     }
 
@@ -143,16 +145,18 @@ class TaskList extends HTMLElement {
 		if (this.getNumTasks() === 0) {
 			const container = this.#shadowRoot.querySelector("#tasklist");
 			container.replaceChildren();
+		}
     }
 
     /**
      * @public
      * @return {Number} - Number of tasks on display in view
      */
-    getNumtasks() {
+    getNumtasks(){
 		const table = this.#shadowRoot.querySelector("#tasklist table")
 		if (table !== null && table.tBodies.length > 0) {
-			return table.tBoodies[0].rows.length;
-    }
+			return table.tBodies[0].rows.length;
+		}
+	}
 }
 customElements.define('group5-tasklist', TaskList);

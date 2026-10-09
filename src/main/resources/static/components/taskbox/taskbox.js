@@ -17,17 +17,18 @@ template.innerHTML = `
 `;
 
 class TaskBox extends HTMLElement {
+	#shadowRoot;
 	constructor() {
 		super();
 		
         this.#shadowRoot = this.attachShadow({mode:'closed'});
         this.#shadowRoot.appendChild(template.content.cloneNode(true));
 
-        this.dialog = this.shadowRoot.querySelector('dialog');
-        this.closeBtn =this.shadowRoot.querySelector('span');
-        this.titleInput = this.shadowRoot.querySelector('input');
-        this.statusSelect = this.shadowRoot.querySelector('select');
-        this.submitBtn = this.shadowRoot.querySelector('button');
+        this.dialog = this.#shadowRoot.querySelector('dialog');
+        this.closeBtn =this.#shadowRoot.querySelector('span');
+        this.titleInput = this.#shadowRoot.querySelector('input');
+        this.statusSelect = this.#shadowRoot.querySelector('select');
+        this.submitBtn = this.#shadowRoot.querySelector('button');
 
         this.newTaskCallback = null;
 		
@@ -44,10 +45,8 @@ class TaskBox extends HTMLElement {
 	}
 	
 	show() {
-		this.title = "";
-		if (this.statusSelect.Options.length > 0) {
-			this.statusSelect.Options = 0;
-		}
+		this.titleInput.value = "";
+		this.statusSelect.value = null;
 		this.dialog.showModal();
 	}
 
