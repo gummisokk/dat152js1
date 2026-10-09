@@ -41,7 +41,6 @@ class TaskView extends HTMLElement {
 
     async getAllStatuses(){
         const response = await (await fetch("api/allstatuses")).json();
-        console.log(response);
         if (response.responseStatus !== true) {
             throw new Error(`Response status: ${response.responseStatus}`);
         }
@@ -50,7 +49,6 @@ class TaskView extends HTMLElement {
 
     async getAllTasks(){
         const response = await (await fetch("api/tasklist")).json();
-        console.log(response);
         if (response.responseStatus !== true) {
             throw new Error(`Response status: ${response.responseStatus}`);
         }
@@ -101,8 +99,8 @@ class TaskView extends HTMLElement {
             if (response.responseStatus === true){
                 this.#tasklist.showTask(response.task);
             }
+            this.#updateMessage();
         });
-        this.#updateMessage();
 
         tasks.forEach((task) => {
             this.#tasklist.showTask(task);

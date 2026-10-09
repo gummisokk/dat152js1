@@ -104,7 +104,7 @@ class TaskList extends HTMLElement {
 		
 		select.addEventListener('change', (e) =>{
 			const selectedStatus = e.target.value;
-			if (selectedStatus !== "0") {
+			if (selectedStatus !== "0" && selectedStatus !== cells[1].textContent) {
 				const confirmed = window.confirm (`set "${task.title}" to "${selectedStatus}"`);
 				if (confirmed === true && this.changestatusCallback !== null){
 					this.changestatusCallback(task.id, selectedStatus);
@@ -142,7 +142,7 @@ class TaskList extends HTMLElement {
 		if (row !== null){
 			row.remove();
 		}
-		if (this.getNumTasks() === 0) {
+		if (this.getNumtasks() === 0) {
 			const container = this.#shadowRoot.querySelector("#tasklist");
 			container.replaceChildren();
 		}
