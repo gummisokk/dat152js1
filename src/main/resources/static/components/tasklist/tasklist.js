@@ -154,9 +154,12 @@ class TaskList extends HTMLElement {
      */
     getNumtasks(){
 		const table = this.#shadowRoot.querySelector("#tasklist table")
-		if (table !== null && table.tBodies.length > 0) {
-			return table.tBodies[0].rows.length;
-		}
+
+        if (table === null) {
+            return 0;
+        }
+
+        return table.tBodies[0].rows.length;
 	}
 }
 customElements.define('group5-tasklist', TaskList);
