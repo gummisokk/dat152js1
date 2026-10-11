@@ -20,6 +20,7 @@ template.innerHTML = `
 `;
 
 class TaskView extends HTMLElement {
+    #shadowRoot;
     #tasklist;
     #taskbox;
     #message;
@@ -29,13 +30,13 @@ class TaskView extends HTMLElement {
     constructor() {
         super();
 
-        this.attachShadow({mode: 'open'});
-        this.shadowRoot.appendChild(template.content.cloneNode(true));
+        this.#shadowRoot = this.attachShadow({mode: 'closed'});
+        this.#shadowRoot.appendChild(template.content.cloneNode(true));
 
-        this.#tasklist = this.shadowRoot.querySelector("group5-tasklist");
-        this.#taskbox = this.shadowRoot.querySelector("group5-taskbox");
-        this.#message = this.shadowRoot.querySelector("#message p");
-        this.#newTaskButton = this.shadowRoot.querySelector("#newtask button");
+        this.#tasklist = this.#shadowRoot.querySelector("group5-tasklist");
+        this.#taskbox = this.#shadowRoot.querySelector("group5-taskbox");
+        this.#message = this.#shadowRoot.querySelector("#message p");
+        this.#newTaskButton = this.#shadowRoot.querySelector("#newtask button");
         this.#serviceUrl = null;
     }
 
