@@ -26,6 +26,7 @@ class TaskView extends HTMLElement {
     #message;
     #newTaskButton;
     #serviceUrl;
+    #initialized;
 
     constructor() {
         super();
@@ -37,33 +38,13 @@ class TaskView extends HTMLElement {
         this.#taskbox = this.#shadowRoot.querySelector("group5-taskbox");
         this.#message = this.#shadowRoot.querySelector("#message p");
         this.#newTaskButton = this.#shadowRoot.querySelector("#newtask button");
+
         this.#serviceUrl = null;
-    }
+        this.#initialized = false;
 
-    async getAllStatuses(){
-        const response = await (await fetch("api/allstatuses")).json();
-        if (response.responseStatus !== true) {
-            throw new Error(`Response status: ${response.responseStatus}`);
-        }
-        return response.allstatuses;
-    }
-
-    async getAllTasks(){
-        const response = await (await fetch("api/tasklist")).json();
-        if (response.responseStatus !== true) {
-            throw new Error(`Response status: ${response.responseStatus}`);
-        }
-        return response.tasks;
-    }
-
-    async connectedCallback() {
-        this.#serviceUrl = this.getAttribute("data-serviceurl");
-
-        let allstatuses = await this.getAllStatuses();
-        let tasks = await this.getAllTasks();
-        
-        this.#tasklist.setStatuseslist(allstatuses);
-        this.#taskbox.setStatuseslist(allstatuses);
+        this.#newTaskButton.addEventListener("click", () => {
+            this.#taskbox.show();
+        });
 
         this.#tasklist.addChangestatusCallback(async (id, newStatus) => {
             const response = await (await fetch(`api/task/${id}`, {
@@ -71,14 +52,12 @@ class TaskView extends HTMLElement {
                 headers: {"Content-Type": "application/json"},
                 body: `{"status": "${newStatus}"}`
             })).json();
-
             if (response.responseStatus === true) {
                 this.#tasklist.updateTask({id: response.id, status: response.status});
             }
 
             this.#updateMessage();
         });
-
 
         this.#tasklist.addDeletetaskCallback(async (id) => {
             const response = await (await fetch(`api/task/${id}`, {
@@ -102,17 +81,49 @@ class TaskView extends HTMLElement {
             }
             this.#updateMessage();
         });
+    }
 
-        tasks.forEach((task) => {
-            this.#tasklist.showTask(task);
-        });
+    async getAllStatuses(){
+        const response = await (await fetch("api/allstatuses")).json();
+        if (response.responseStatus !== true) {
+            throw new Error(`Response status: ${response.responseStatus}`);
+        }
+        return response.allstatuses;
+    }
 
-        this.#newTaskButton.disabled = false;
-        this.#newTaskButton.addEventListener("click", () => {
-            this.#taskbox.show();
-        });
+    async getAllTasks(){
+        const response = await (await fetch("api/tasklist")).json();
+        if (response.responseStatus !== true) {
+            throw new Error(`Response status: ${response.responseStatus}`);
+        }
+        return response.tasks;
+    }
 
-        this.#updateMessage();
+    async connectedCallback() {
+        if (this.#initialized) {
+            return;
+        }
+
+        this.#initialized = true;
+        this.#serviceUrl = this.getAttribute("data-serviceurl");
+
+        try {
+            const allstatuses = await this.getAllStatuses();
+            const tasks = await this.getAllTasks();
+
+            this.#tasklist.setStatuseslist(allstatuses);
+            this.#taskbox.setStatuseslist(allstatuses);
+
+            tasks.forEach((task) => {
+                this.#tasklist.showTask(task);
+            });
+
+            this.#newTaskButton.disabled = false;
+            this.#updateMessage();
+        } catch (error) {
+            this.#setMessage(`Could not load tasks: ${error.message}`);
+            this.#initialized = false;
+        }
     }
 
     #setMessage(text) {
