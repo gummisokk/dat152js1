@@ -115,7 +115,7 @@ class TaskList extends HTMLElement {
 		
 		removeBtn.addEventListener('click', () =>{
 			const confirmed = window.confirm(`delete task "${task.title}"`);
-			if (confirmed && this.deletetaskCallback){
+			if (confirmed === true && this.deletetaskCallback !== null){
 				this.deletetaskCallback(task.id);
 			}
 		});

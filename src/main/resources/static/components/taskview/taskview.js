@@ -100,7 +100,7 @@ class TaskView extends HTMLElement {
     }
 
     async connectedCallback() {
-        if (this.#initialized) {
+        if (this.#initialized === true) {
             return;
         }
 
